@@ -1,0 +1,122 @@
+题目描述：
+
+给你一个以字符串形式表述的 布尔表达式（boolean） expression，返回该式的运算结果。
+
+有效的表达式需遵循以下约定：
+
+"t"，运算结果为 True
+"f"，运算结果为 False
+"!(expr)"，运算过程为对内部表达式 expr 进行逻辑 非的运算（NOT）
+"&(expr1,expr2,...)"，运算过程为对 2 个或以上内部表达式 expr1, expr2, ... 进行逻辑 与的运算（AND）
+"|(expr1,expr2,...)"，运算过程为对 2 个或以上内部表达式 expr1, expr2, ... 进行逻辑 或的运算（OR）
+ 
+
+示例 1：
+
+输入：expression = "!(f)"
+输出：true
+示例 2：
+
+输入：expression = "|(f,t)"
+输出：true
+示例 3：
+
+输入：expression = "&(t,f)"
+输出：false
+示例 4：
+
+输入：expression = "|(&(t,f,t),!(t))"
+输出：false
+ 
+
+提示：
+
+1 <= expression.length <= 20000
+expression[i] 由 {'(', ')', '&', '|', '!', 't', 'f', ','} 中的字符组成。
+expression 是以上述形式给出的有效表达式，表示一个布尔值。
+
+解答思路：
+
+看到题解用的都是两个栈，但是感觉一个栈就能够解决题目要求。
+
+第一部需要分清楚进栈和出栈的条件。
+
+① 当遍历的字符串expression[ i ]不是‘   ） ’时，进栈。
+
+②当遍历的字符串expressssion[ i ]是‘  ） ’ 时，出栈。
+
+如果进行②的操作，则取while（），如果定义的栈顶元素到‘（  ’，while（）也可以停止了。
+
+就该考虑t，f的运算逻辑符关系了
+
+①当运算逻辑符为 ！：如果 t 的数量大于0，则这段运算式为f；否则为 t 。
+
+②当运算逻辑符为 |  ：如果 t 的数量大于0，则这段运算式为 t；否则为 f 。
+
+③当运算逻辑符为 & ：如果 f 的数量大于0，则这段运算式为 f；否则为 t。
+
+然后再将此段逻辑式的结果存放在栈中，接着遍历到下一个 ‘ ）’，最后直接取出栈顶元素，如果是t，返回 true；反之 返回 false。
+
+完整代码：
+
+class Solution {
+public:
+    bool parseBoolExpr(string expression) {
+        stack<char>s;
+        for(int i=0;i<expression.length();i++)
+        {
+            if(expression[i]==')')
+            {
+                int nums_t=0;
+                int nums_f=0;
+                while(s.top()!='!'&&s.top()!='&'&&s.top()!='|')
+                {
+                    if(s.top()=='t')
+                    {
+                        nums_t++;
+                    }
+                    if(s.top()=='f')
+                    {
+                        nums_f++;
+                    }
+                    s.pop();
+                }
+                char  str=s.top();
+                s.pop();
+                if(str=='!')
+                {
+                    if(nums_f==0)
+                    {
+                        s.push('f');
+                    }
+                    if(nums_t==0)
+                    {
+                        s.push('t');
+                    }
+                }
+                if(str=='|')
+                {
+                    if(nums_t>0)
+                    {
+                        s.push('t');
+                    }
+                    else s.push('f');
+                }
+                if(str=='&')
+                {
+                    if(nums_f>0)
+                    {
+                        s.push('f');
+                    }
+                    else s.push('t');
+                }
+            }
+            else
+                s.push(expression[i]);
+        }
+        if(s.top()=='t') return true;
+        else   return false;
+    }
+};
+
+————————————————
