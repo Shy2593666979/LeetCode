@@ -1,0 +1,162 @@
+题目：给定一组非负整数 nums，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。
+
+注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+
+示例 ：
+
+输入
+nums = [3,30,34,5,9]
+
+输出：
+"9534330"
+提示：
+
+1 <= nums.length <= 100
+0 <= nums[i] <= 10^9
+组成的数肯定是大于int类型的最大值的，所以本道题肯定要用到字符串
+
+思路一：把数组内的所有数改成字符串，用来比较哪个字符串更大一些
+
+思路二：将每个多位数分成单个数字保存在用户定义的数组之中，然后将每个数组按照大小排序
+
+我在这道题上面选择的是是思路二，可能是更容易让读者看懂一些，但是写的过程并不简单！
+
+首先我们将每个数分成数字保存在各自的数组中
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            int target = nums[i];
+            vet.clear();
+            while (target > 0)
+            {
+                int x = target % 10;
+                target = target / 10;
+                vet.push_back(x);
+            }
+            reverse(vet.begin(), vet.end());
+            v.push_back(vet);
+        }
+vet.clear()是清空容器里面的元素，每次循环必须的，否则会导致数据溢出！
+
+reverse（）是将数组中的元素翻转，因为把一个多位数分离成单个数字时，是按照个位、十位、百位添加的，所以需要倒过来再存放在二维数组中。
+
+这里二维数组的添加已经完成了。最后需要sort（）函数将各个一维数组排序。
+
+排完序后再将每个一维数组的数字变成数值
+
+        for (int i = 0; i < v.size(); i++)
+        {
+            int temp = 0;
+            for (int j = 0; j < v[i].size(); j++)
+            {
+                temp = temp * 10 + v[i][j];
+            }
+ 
+            path.push_back(temp);
+        }
+PS：在这里说明一下为什么需要分成数字保存在数组中，排序完再组成数值。
+
+当[3,30,46,4]。如果直接排序的话，是[3,4,30,46]。这时从前到后还是从后到前，都不是我们所找的最大值，但如果是分成各个数字后排序是[[3],[3,0],[4],[4,6]]。再组合成数值后为[3,30,4,46]。这样就是我们找的最大值啦！
+
+然而问题又来了，排完序后是[3，30],我们是从后往前的，组合最大数是303，是小于330的，这时候就需要加入一个swap（）函数进行有条件性的交换。
+
+        for (int i = 0; i < path.size() - 1; i++)
+        {
+            string str1 = to_string(path[i]) + to_string(path[i + 1]);
+            string str2 = to_string(path[i + 1]) + to_string(path[i]);
+            if (str2 < str1)
+            {
+                swap(path[i], path[i + 1]);
+                i = -1;  //i=i-1是如果交换后，重新从i=0开始再次遍历一遍
+            }
+        }
+完成这些后只需要定义一个string即可完成
+
+        string str = "";
+        for (int i = path.size() - 1; i >= 0; i--)
+        {
+            string st = to_string(path[i]);
+            str = str + st;
+        }
+在所有的测试中，发现只有一个通不过就是[0,0,0]
+
+我们编写的程序是000，但应该是0，所以就来一个特殊条件
+
+        int pos = 0;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] != 0)
+            {
+                pos = pos + 1;
+            }
+        }
+        if (pos == 0)
+        {
+            str = "0";
+        }
+完整代码：
+
+class Solution
+{
+public:
+    string largestNumber(vector<int> &nums)
+    {
+        vector<int> vet;
+        vector<vector<int>> v;
+        vector<int> path;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            int target = nums[i];
+            vet.clear();
+            while (target > 0)
+            {
+                int x = target % 10;
+                target = target / 10;
+                vet.push_back(x);
+            }
+            reverse(vet.begin(), vet.end());
+            v.push_back(vet);
+        }
+        sort(v.begin(), v.end());
+        for (int i = 0; i < v.size(); i++)
+        {
+            int temp = 0;
+            for (int j = 0; j < v[i].size(); j++)
+            {
+                temp = temp * 10 + v[i][j];
+            }
+            path.push_back(temp);
+        }
+        for (int i = 0; i < path.size() - 1; i++)
+        {
+            string str1 = to_string(path[i]) + to_string(path[i + 1]);
+            string str2 = to_string(path[i + 1]) + to_string(path[i]);
+            if (str2 < str1)
+            {
+                swap(path[i], path[i + 1]);
+                i = -1;
+            }
+        }
+        string str = "";
+        for (int i = path.size() - 1; i >= 0; i--)
+        {
+            string st = to_string(path[i]);
+            str = str + st;
+        }
+        int pos = 0;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] != 0)
+            {
+                pos = pos + 1;
+            }
+        }
+        if (pos == 0)
+        {
+            str = "0";
+        }
+        return str;
+    }
+};
+
+————————————————
