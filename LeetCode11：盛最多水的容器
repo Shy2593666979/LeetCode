@@ -1,0 +1,62 @@
+题目：给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
+
+找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+返回容器可以储存的最大水量。
+
+提示：
+
+n == height.length
+2 <= n <= 100000
+0 <= height[i] <= 10000
+
+ 
+看到题目首先想到的就是两个for（）直接解决，但是在leetcode上超出时间限制了
+
+这时候就要考虑其他方法了
+
+ps：一般情况数组长度大于50000，就不能再使用两个for（），会超出时间限制
+
+双指针：利用左右指针，逐渐计算出最大容器（类似于二分法）
+
+定义left和right，如果 数组中左边小于右边，数组左边下标往右一个单位
+
+数组右边小于左边，数组右边往左一个单位，如果left > right 直接break；
+
+通过数组数据两个中取最小，下标相减，求出最大盛水容器
+
+完整代码：
+
+class Solution
+{
+public:
+    int maxArea(vector<int> &height)
+    {
+        int left = 0;
+        int right = height.size() - 1;
+        int Max = 0;
+        if (height.size() == 2)
+        {
+            Max = min(height[0], height[1]);
+        }
+        else
+        {
+            while (left < right)
+            {
+                Max = max(Max, min(height[right],height[left]) * (right - left));
+                if (height[left] < height[right])
+                {
+                    left = left + 1;
+                }
+                else
+                {
+                    right = right - 1;
+                }
+            }
+        }
+        return Max;
+    }
+};
+
+只要读者掌握双指针，本题的思路并不是很难的。
+————————————————
