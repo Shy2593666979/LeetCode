@@ -1,0 +1,47 @@
+题目：给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的中位数。
+
+要求：算法的时间复杂度应该为 O(log (m+n))
+
+nums1.length == m
+nums2.length == n
+0 <= m <= 1000
+0 <= n <= 1000
+1 <= m + n <= 2000
+-106 <= nums1[i], nums2[i] <= 106
+这道题是困难题型，但是解题思路并不是很复杂，最重要的就是将两个正序数组合起来排序
+
+一可以新增一个数组，也可以使用vector容器
+
+题中用到很多STL的知识，可以通过这篇文章http://t.csdn.cn/RID11了解一下
+
+本道题选择后者，vector容器用起来更加方便，合并两个数组更加简单
+
+排完序后，分奇偶数进行中位数的计算
+
+完整代码：
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+      vector<int>v;
+      int m=nums1.size();
+      int n=nums2.size();
+      v.resize(m+n);           //合并容器前一定先开辟空间！
+      merge(nums1.begin(),nums1.end(),nums2.begin(),nums2.end(),v.begin());
+      sort(v.begin(),v.end());
+      double target;
+      if((m+n)%2==0)   //偶数
+      {
+        target=v[(m+n)/2-2]*0.5+v[(m+n)/2-1]*0.5;
+      }
+      else{
+        target=v[(m+n)/2];
+      }
+      return target;
+    }
+};
+
+在用merge（）函数进行合并两个数组时，需要通过resize（）提前预支内存，否则报错！
+
+另外需要注意的就是中位数可能有小数，return 的数据需要double定义
+————————————————
