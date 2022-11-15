@@ -1,0 +1,80 @@
+题目：
+
+给定一个字符串 s ，根据字符出现的 频率 对其进行 降序排序 。一个字符出现的 频率 是它出现在字符串中的次数。
+
+返回 已排序的字符串 。如果有多个答案，返回其中任何一个。
+
+示例 1:
+
+输入: s = "tree"
+输出: "eert"
+解释: 'e'出现两次，'r'和't'都只出现一次。
+因此'e'必须出现在'r'和't'之前。此外，"eetr"也是一个有效的答案。
+示例 2:
+
+输入: s = "cccaaa"
+输出: "cccaaa"
+解释: 'c'和'a'都出现三次。此外，"aaaccc"也是有效的答案。
+注意"cacaca"是不正确的，因为相同的字母必须放在一起。
+示例 3:
+
+输入: s = "Aabb"
+输出: "bbAa"
+解释: 此外，"bbaA"也是一个有效的答案，但"Aabb"是不正确的。
+注意'A'和'a'被认为是两种不同的字符。
+ 
+
+提示:
+
+1 <= s.length <= 5 * 10^5
+s 由大小写英文字母和数字组成
+
+思路：
+
+字符串s的长度length小于500000的，时间复杂度控制在O（n），通过一次for（）来统计出各字符出现频数。我们首先想到的就是哈希表，定义一个unordered_map，来统计字符出现频数。
+
+将每个字符出现的次数存放在一int数组中，按照从大到小排序。用erase（）和unique（）函数将所有重复字符删去（保留一个字符）。再将int数组进行从大到小遍历，如果unordered_map中的->second对应这个数组元素，则将其赋值给str（定义的string变量）。
+
+完整代码：
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        string s1=s;
+        vector<int>path;
+        unordered_map<char,int>mp;
+        string str="";
+        sort(s1.begin(),s1.end());  //mp的初始化
+        s1.erase(unique(s1.begin(),s1.end()),s1.end());
+        for(int i=0;i<s1.length();i++)
+        {
+            mp[s1[i]]=0;
+        }
+        for(int i=0;i<s.length();i++) //统计各个字符出现次数
+        {
+            mp[s[i]]++;
+        }
+        for(int i=0;i<s1.length();i++)
+        {
+            path.push_back(mp[s1[i]]);
+        }
+        sort(path.begin(),path.end());
+        reverse(path.begin(),path.end());
+        for(int i=0;i<path.size();i++)
+        {
+            for(int j=0;j<s1.length();j++)
+            {
+                if(path[i]==mp[s1[j]])
+                {
+                    string st(path[i],s1[j]);
+                    str=str+st;
+                    s1.erase(j,1); //删除字符是因为怕下次遍历再次遇到
+                    j--; //因为是删除的一个字符，所以需要回到原来的位置
+                }
+            }
+        }
+        return str;
+    }
+};
+
+————————————————
