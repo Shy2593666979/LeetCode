@@ -1,0 +1,154 @@
+题目： 给定一个非空字符串 s，最多删除一个字符。判断是否能成为回文字符串。
+
+题目要求：
+
+返回true有两种情况：
+
+①给的s字符串就是回文字符串，可以直接return true；
+
+②需要去除s字符串中的一字母使其变为字符串，再return true；
+
+只需考虑这两种情况即可，如果不能满足之一，则return  false；
+
+为了给读者更好的阅读体验，依然采用VScode编译器书写此代码。
+
+
+
+先将字符串s中的各个字符分离出来存放在数组之中
+
+使用vector容器进行储存（后面有讲到为什么不用数组储存）
+
+ vector<int> v;
+for (int i = 0; i < s.length(); i++)
+    {
+        int m = s[i] - '0';
+        v.push_back(m);
+    }
+这里vector的数据类型选择的int，也可以是string
+
+ps：此题中使用了很多STL-vector的算法，读者可以通过 http://t.csdn.cn/RID11 了解掌握
+
+1.判断s字符串本身是回文字符串
+
+   int pos = 0;
+    for (int i = 0; i < s.length() / 2; i++)
+    {
+        if (v.at(i) != v.at(s.length() - i - 1))
+        {
+            pos = pos + 1;
+        }
+    }
+for循环的最值到字符串s长度的一半即可，节省运行时间
+
+if（pos==0）说明是回文字符串，这里定义的是int类型，不需要考虑是否为奇偶数
+
+2.需要去除s字符串中的一字符使其变为字符串，再return true；
+
+这里需要删除某一字符再比较是否为回文字符串，使用容器vector某一元素后可直接有下一元素补上，这里就体现了vector的灵活性，而数组是不具有的
+
+    
+    vector<int> v;
+    vector<int> v1;
+    for (int i = 0; i < s.length(); i++)
+    {
+        int m = s[i] - '0';
+        v.push_back(m);
+    }    
+    int res = 0;
+    v1.assign(v.begin(), v.end());
+    for (int i = 0; i < s.length(); i++)
+    {
+        v.assign(v1.begin(), v1.end());
+        int x = 0;
+        v.erase(v.begin() + i);
+        for (int i = 0; i < (s.length() - 1) / 2; i++)
+        {
+            if (v.at(i) != v.at(s.length() - i - 2))
+            {
+                x = x + 1;
+            }
+        }
+        if (x == 0)
+        {
+            res = res + 1;
+        }
+    }
+
+  着重强调一下，因为每次只能删除一个字符，再比较是否为回文字符串。到下次再比较时还是需要用原来的字符串s，所以这里定义了一个v1，用来每次v的复原。
+
+最后只需要满足字符串中删除某一个元素后，成为回文字符，即可return true；
+
+if (res > 0 || pos == 0)
+ 
+    {
+ 
+        return true;
+ 
+    }
+ 
+    else
+ 
+    {
+ 
+        return false;
+ 
+    }
+
+                                                   算法分块已经全部搞定！
+
+leetcode680完整代码如下：
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int main()
+{
+    string s;
+    cout<<"   :"<<endl;
+    cin>>s;
+    vector<int> v;
+    vector<int> v1;
+    for (int i = 0; i < s.length(); i++)
+    {
+        int m = s[i] - '0';
+        v.push_back(m);
+    }
+    int pos = 0;
+    int res = 0;
+    for (int i = 0; i < s.length() / 2; i++)
+    {
+        if (v.at(i) != v.at(s.length() - i - 1))
+        {
+            pos = pos + 1;
+        }
+    }
+    v1.assign(v.begin(), v.end());
+    for (int i = 0; i < s.length(); i++)
+    {
+        v.assign(v1.begin(), v1.end());
+        int x = 0;
+        v.erase(v.begin() + i);
+        for (int i = 0; i < (s.length() - 1) / 2; i++)
+        {
+            if (v.at(i) != v.at(s.length() - i - 2))
+            {
+                x = x + 1;
+            }
+        }
+        if (x == 0)
+        {
+            res = res + 1;
+        }
+    }
+    if (res > 0 || pos == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+时间维度的话在这里没有考虑
