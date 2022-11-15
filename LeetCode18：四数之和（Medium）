@@ -1,0 +1,113 @@
+题目：给你一个由 n 个整数组成的数组 nums ，和一个目标值 target 。请你找出并返回满足下述全部条件且不重复的四元组 [nums[a], nums[b], nums[c], nums[d]] （若两个四元组元素一一对应，则认为两个四元组重复）： a、b、c 和 d 互不相同 
+
+nums[a] + nums[b] + nums[c] + nums[d] == target，你可以按 任意顺序 返回答案 。
+
+提示：
+
+1 <= nums.length <= 200
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+两种方法：
+
+①暴力解法：直接四个for（），但在这里应该是超出时间限制！
+
+②排序+双指针法：将所给的元素排序后，再用双指针收缩到一定程度，求出其结果。
+
+这里要用到vector的二阶性、排序算法、clear（）等vector容器的高级用法，读者可自行阅读文章http://t.csdn.cn/RID11
+
+1.将所给数组元素按照从小到大排序、并定义二阶、一阶vector
+
+vector<int> vet;
+vector<vector<int>> v;
+sort(nums.begin(), nums.end(
+2.因为双指针只能指两个元素，所以还需要再用两个for（）确定两个数据
+
+两个for（）中再嵌入一个while（），代表着双指针！
+
+         for (int i = 0; i < nums.size(); i++)
+         {
+            for (int j = i + 1; j < nums.size(); j++)
+            {
+ 
+                int left = j + 1;
+                int right = nums.size() - 1;
+                while (left < right)
+                {
+                    vet.clear();
+                    long temp = (long)nums[i] + (long)nums[j] + (long)nums[left] + (long)nums[right];
+                    if (temp == target)
+                    {
+                        vet.push_back(nums[i]);
+                        vet.push_back(nums[j]);
+                        vet.push_back(nums[left]);
+                        vet.push_back(nums[right]);
+                        v.push_back(vet);
+                    }
+                    if (temp - target >= 0)
+                    {
+                        right = right - 1;
+                    }
+                    if (temp - target < 0)
+                    {
+                        left = left + 1;
+                    }
+                }
+            }
+        }
+
+ps：因为提示中显示nums数组元素最大是10^9，四个最大元素相加是大于int类型的最大值2.9X10^9,所以需要用long在定义一个temp，防止leetcode中某些奇葩案列导致结果不能提交
+
+每次循环都需要v.clear()清空元素，否则会导致数据堆积！
+
+3.最后需要去除重复元素
+
+       sort(v.begin(), v.end());
+        v.erase(unique(v.begin(), v.end()), v.end());
+完整代码：
+
+class Solution
+{
+public:
+    vector<vector<int>> fourSum(vector<int> &nums, int target)
+    {
+        vector<int> vet;
+        vector<vector<int>> v;
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size(); i++)
+        {
+            for (int j = i + 1; j < nums.size(); j++)
+            {
+ 
+                int left = j + 1;
+                int right = nums.size() - 1;
+                while (left < right)
+                {
+                    vet.clear();
+                    long temp = (long)nums[i] + (long)nums[j] + (long)nums[left] + (long)nums[right];
+                    if (temp == target)
+                    {
+                        vet.push_back(nums[i]);
+                        vet.push_back(nums[j]);
+                        vet.push_back(nums[left]);
+                        vet.push_back(nums[right]);
+                        v.push_back(vet);
+                    }
+                    if (temp - target >= 0)
+                    {
+                        right = right - 1;
+                    }
+                    if (temp - target < 0)
+                    {
+                        left = left + 1;
+                    }
+                }
+            }
+        }
+        sort(v.begin(), v.end());
+        v.erase(unique(v.begin(), v.end()), v.end());
+        return v;
+    }
+};
+
+本道题的解题思路就是这样了
+————————————————
