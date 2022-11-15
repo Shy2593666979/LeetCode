@@ -1,0 +1,69 @@
+这经常玩英雄联盟的盟友这题对咱来说不是简简单单嘛我( •̀ ω •́ )
+
+题目描述：
+
+在《英雄联盟》的世界中，有一个叫 “提莫” 的英雄。他的攻击可以让敌方英雄艾希（编者注：寒冰射手）进入中毒状态。
+
+当提莫攻击艾希，艾希的中毒状态正好持续 duration 秒。
+
+正式地讲，提莫在 t 发起发起攻击意味着艾希在时间区间 [t, t + duration - 1]（含 t 和 t + duration - 1）处于中毒状态。如果提莫在中毒影响结束 前 再次攻击，中毒状态计时器将会 重置 ，在新的攻击之后，中毒影响将会在 duration 秒后结束。
+
+给你一个 非递减 的整数数组 timeSeries ，其中 timeSeries[i] 表示提莫在 timeSeries[i] 秒时对艾希发起攻击，以及一个表示中毒持续时间的整数 duration 。
+
+返回艾希处于中毒状态的 总 秒数。
+
+示例 1：
+
+输入：timeSeries = [1,4], duration = 2
+输出：4
+解释：提莫攻击对艾希的影响如下：
+- 第 1 秒，提莫攻击艾希并使其立即中毒。中毒状态会维持 2 秒，即第 1 秒和第 2 秒。
+- 第 4 秒，提莫再次攻击艾希，艾希中毒状态又持续 2 秒，即第 4 秒和第 5 秒。
+艾希在第 1、2、4、5 秒处于中毒状态，所以总中毒秒数是 4 。
+示例 2：
+
+输入：timeSeries = [1,2], duration = 2
+输出：3
+解释：提莫攻击对艾希的影响如下：
+- 第 1 秒，提莫攻击艾希并使其立即中毒。中毒状态会维持 2 秒，即第 1 秒和第 2 秒。
+- 第 2 秒，提莫再次攻击艾希，并重置中毒计时器，艾希中毒状态需要持续 2 秒，即第 2 秒和第 3 秒。
+艾希在第 1、2、3 秒处于中毒状态，所以总中毒秒数是 3 。
+ 
+
+提示：
+
+1 <= timeSeries.length <= 104
+0 <= timeSeries[i], duration <= 107
+timeSeries 按 非递减 顺序排列
+
+思路：duration就是提莫的中毒时间，我们玩英雄联盟的读者都知道，如果踩到提莫的蘑菇，会有中毒、灼烧效果，但是在这个中毒时间范围内再次踩到蘑菇，就会出现时间重置，伤害并不是两个蘑菇加起来的伤害，这道题就是在这个基础上计算的；（盟友秒懂）
+
+如果timeSeries的两个元素之差大于duration，会导致中毒时间最长。但如果timeSeries的两个元素之差小于duration，就会取两个元素差作为中毒时间。在timeSeries数组的最后元素一定是中了提莫中毒时间的最大值的。
+
+完整代码：
+
+class Solution {
+public:
+    int findPoisonedDuration(vector<int>& timeSeries, int duration) {
+        int sum=duration;
+        vector<int>path;
+        for(int i=0;i<timeSeries.size()-1;i++)
+        {
+            path.push_back(timeSeries[i+1]-timeSeries[i]);
+        }
+        for(int i=0;i<path.size();i++)
+        {
+            if(path[i]>=duration)
+            {
+                sum+=duration;
+            }
+            else
+            {
+                sum+=path[i];
+            }
+        }
+        return sum;
+    }
+};
+
+————————————————
