@@ -1,0 +1,119 @@
+题目：给你一个按照非递减顺序排列的整数数组 nums，和一个目标值 target。请你找出给定目标值在数组中的开始位置和结束位置。
+
+如果数组中不存在目标值 target，返回 [-1, -1]。
+
+注意：你必须设计并实现时间复杂度为 O(log n) 的算法解决此问题。
+
+看这道题，已经把比较重要的细节标黑了，非递减顺序排列和时间复杂度必须是log n
+
+所以是用的二分查找方法
+
+当然如果只是为了提交答案，直接用暴力解法可以提交结果！
+
+二分查找必须满足有序性，在这里是非递减顺序，是可以的
+
+首先判断给的数组中元素是否为空
+
+if (nums.empty())
+        {
+            return {-1, -1};
+        }
+如果数组元素为空，直接返回[-1,-1]
+
+需要查找target的左右边界，查到后可直接返回下标值。
+
+int left = 0;
+        int right = nums.size() - 1;
+        while (left < right)
+        {
+            int mid = (left + right) / 2;
+            if (nums[mid] >= target)
+            {
+                right = mid;
+            }
+            if (nums[mid] < target)
+            {
+                left = mid + 1;
+            }
+        }
+查找右边界：
+
+left = 0;
+        right = nums.size() - 1;
+        while (left < right)
+        {
+            int mid = (left + right + 1) / 2;
+            if (nums[mid] <= target)
+            {
+                left = mid;
+            }
+            if (nums[mid] > target)
+            {
+                right = mid - 1;
+            }
+        }
+当然给的实例也有可能target不是元素中的数值，可以在查找左边界后通过
+
+if (nums[left] != target)
+
+        {
+
+            return {-1, -1};
+
+        }
+
+                                              判断是否返回[-1,-1]
+
+完整代码：
+
+class Solution
+{
+public:
+    vector<int> searchRange(vector<int> &nums, int target)
+    {
+        vector<int> v;
+        if (nums.empty())
+        {
+            return {-1, -1};
+        }
+        int left = 0;
+        int right = nums.size() - 1;
+        while (left < right)
+        {
+            int mid = (left + right) / 2;
+            if (nums[mid] >= target)
+            {
+                right = mid;
+            }
+            if (nums[mid] < target)
+            {
+                left = mid + 1;
+            }
+        }
+        int l = left;
+        if (nums[left] != target)
+        {
+            return {-1, -1};
+        }
+        left = 0;
+        right = nums.size() - 1;
+        while (left < right)
+        {
+            int mid = (left + right + 1) / 2;
+            if (nums[mid] <= target)
+            {
+                left = mid;
+            }
+            if (nums[mid] > target)
+            {
+                right = mid - 1;
+            }
+        }
+        v.push_back(l);
+        v.push_back(right);
+        return v;
+    }
+};
+
+本道题的思路大致就是这样了
+————————————————
