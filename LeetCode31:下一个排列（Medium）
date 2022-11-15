@@ -1,0 +1,127 @@
+题目：整数数组的一个 排列  就是将其所有成员以序列或线性顺序排列。
+
+例如，arr = [1,2,3] ，以下这些都可以视作 arr 的排列：[1,2,3]、[1,3,2]、[3,1,2]、[2,3,1] 。
+整数数组的 下一个排列 是指其整数的下一个字典序更大的排列。更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的 下一个排列 就是在这个有序容器中排在它后面的那个排列。如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+
+提示：例如，arr = [1,2,3] 的下一个排列是 [1,3,2] 。
+类似地，arr = [2,3,1] 的下一个排列是 [3,1,2] 。
+而 arr = [3,2,1] 的下一个排列是 [1,2,3] ，因为 [3,2,1] 不存在一个字典序更大的排列。
+给你一个整数数组 nums ，找出 nums 的下一个排列。
+
+必须 原地 修改，只允许使用额外常数空间。
+
+1 <= nums.length <= 100
+0 <= nums[i] <= 100
+题目比较长，大概意思就是找出给的排列数稍大一点的排列，如果给的[1,3,2 ],那就找出132大一点的数[2,1,3]，如果给的是最大数[3,2,1]，那直接返回最小值[1,2,3]。
+
+通过题目可以看出来，如果将排列数的长度限制在10以内，可以通过乘除的方法求解，不过这道题数据长度小于100，数据小于100，相乘起来是大于int，甚至大于long类型。
+
+观察给的排列顺序，可以发现，越变动前面的数，变化的越大，错误可能性越高，变动后面的数，错误可能越低。例如 [4,5,3,1,2].将1，2互换位置就可以得到答案。
+
+所以我们的顺序是从后往前的
+
+在定义for（）时体现：
+
+for (int i = nums.size() - 1; i > 0; i--)
+这样能都准确找到答案
+
+接下来是寻找右边数大于左边数的
+
+if (nums[i] > nums[i - 1])
+找到这一下标就可以大致判断需要修改的位置
+
+if (nums[i] > nums[i - 1])
+            {
+                for (int x = i; x < nums.size(); x++)
+                {
+                    if (nums[x] > nums[i - 1])
+                    {
+                        v.push_back(nums[x]);
+                    }
+                }
+                sort(v.begin(), v.end());
+                for (int s = i; s < nums.size(); s++)
+                {
+                    if (v[0] == nums[s])
+                    {
+                        Min = s;
+                    }
+                }
+                int temp = nums[Min];
+                nums[Min] = nums[i - 1];
+                nums[i - 1] = temp;
+                target = i;
+                break;
+
+这里需要注意的是将下标到结尾处查询一遍，找出比目标值大一点的数
+
+在这里是    v.push_back(nums[x]);        sort(v.begin(), v.end());  找出的，最后再用一个for()找出最小的下标，进行两者数值的交换。因为只需要找出一个下一个排列，最后break就行。
+
+这里就出现一个bug，如果全是右边小于左边的话怎么办，例如 [5,4,3,2,1] ，这个是需要直接返回最小[1,2,3,4,5]。     只需要在第一个for（）中加：
+
+              else
+            {
+                pos = pos + 1;
+            }
+在for（）外面加：
+
+if (pos == nums.size() - 1)
+        {
+            sort(nums.begin(), nums.end());
+        }
+这时再提交结果时又会出现bug  [1,5,4,3,2]。如果按照运行结果，应该是[2,5,4,3,1]。但实际结果是[2,5,1,3,4]，所以需要将目标值下标X以后的数值按照从小到大排序
+
+sort(nums.begin() + target, nums.end());
+完整代码：
+
+class Solution
+{
+public:
+    void nextPermutation(vector<int> &nums)
+    {
+        int Min = 100;
+        int target;
+        int pos = 0;
+        vector<int> v;
+        for (int i = nums.size() - 1; i > 0; i--)
+        {
+            if (nums[i] > nums[i - 1])
+            {
+                for (int x = i; x < nums.size(); x++)
+                {
+                    if (nums[x] > nums[i - 1])
+                    {
+                        v.push_back(nums[x]);
+                    }
+                }
+                sort(v.begin(), v.end());
+                for (int s = i; s < nums.size(); s++)
+                {
+                    if (v[0] == nums[s])
+                    {
+                        Min = s;
+                    }
+                }
+                int temp = nums[Min];
+                nums[Min] = nums[i - 1];
+                nums[i - 1] = temp;
+                target = i;
+                break;
+            }
+            else
+            {
+                pos = pos + 1;
+            }
+        }
+        if (pos == nums.size() - 1)
+        {
+            sort(nums.begin(), nums.end());
+        }
+        sort(nums.begin() + target, nums.end());
+    }
+};
+
+运行结果：
+
+ 因为咱们用了两个for（），运行的时间比较少，写的代码比较多，所以内存消耗多一点。
+————————————————
