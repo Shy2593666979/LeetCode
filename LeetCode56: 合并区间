@@ -1,0 +1,115 @@
+题目：
+
+以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
+
+示例 ：
+
+输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出：[[1,6],[8,10],[15,18]]
+解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+
+提示：
+
+1 <= intervals.length <= 10^4
+intervals[i].length == 2
+0 <= start<= end <= 10^4
+
+题目就是要求出所给的全部子集合的并集。
+
+思路：先用sort（）排序函数将所有的区间数组按第一个数的大小进行排序。观察规律，如果第二个区间数组的start大于第一个区间数组的start并且小于第一个区间数组的end。就说明两个区间数组可以并集起来，并集区间start取第一个区间数组的start，end取两个区间数组的end最大值——max( intervals[i-1][1], intervals[i][1] )，最后将各个并集数组保存在二维数组中。
+
+第一步定义多个容器来存放数组
+
+        vector<int> vet;
+        vector<int> path;
+        vector<vector<int>> v;
+排完序后，特殊示例intervals.size()==1时单列出来
+
+        sort(intervals.begin(), intervals.end());
+        if (intervals.size() == 1)
+        {
+            path.push_back(intervals[0][0]);
+            path.push_back(intervals[0][1]);
+            v.push_back(path);
+        }
+下一步也是最重要的一步，就是将所有区间数组的并集找出来存放在之前定义的容器中
+
+用vet把第一个元素（下标为0）赋值
+
+   vet.assign(intervals[0].begin(), intervals[0].end());
+再对每个区间数组进行遍历，如果第二个区间数组的start大于第一个区间数组的start并且小于第一个区间数组的end。将两个区间数组可以并集起来，并集区间start取第一个区间数组的start，end取两个区间数组的end最大值
+
+if (vet[0] <= intervals[i][0] && vet[1] >= intervals[i][0])
+                {
+                    path.clear();
+                    path.push_back(vet[0]);
+                    path.push_back(max(vet[1], intervals[i][1]));
+                    vet.assign(path.begin(),path.end());
+                }
+在这里path数组的作用就是及时更新并集的情况。
+
+然后再用path赋值给vet，如果出现不满足if（）条件句中的条件，则将vet存放二维数组v中，再次将vet进行clear（）清空！
+
+                    v.push_back(vet);
+                    vet.clear();
+                    path.clear();
+                    path.push_back(intervals[i][0]);
+                    path.push_back(intervals[i][1]);
+                    vet.assign(path.begin(), path.end());
+接着是path存放这个遍历区间数组，赋值给vet，与下一个区间数组进行比较，如果满足if（）语句，将再次并集，形成循环。
+
+这样基本上就没有什么大的问题了，就只是最后一个区间数组总是加不上，所以再加一个if（）
+
+            if (i == intervals.size() - 1)
+                {
+                    v.push_back(vet);
+                }
+完整代码：
+
+class Solution
+{
+public:
+    vector<vector<int>> merge(vector<vector<int>> &intervals)
+    {
+        vector<int> vet;
+        vector<int> path;
+        vector<vector<int>> v;
+        sort(intervals.begin(), intervals.end());
+        if (intervals.size() == 1)
+        {
+            path.push_back(intervals[0][0]);
+            path.push_back(intervals[0][1]);
+            v.push_back(path);
+        }
+        else
+        {
+            vet.assign(intervals[0].begin(), intervals[0].end());
+            for (int i = 1; i < intervals.size(); i++)
+            {
+                if (vet[0] <= intervals[i][0] && vet[1] >= intervals[i][0])
+                {
+                    path.clear();
+                    path.push_back(vet[0]);
+                    path.push_back(max(vet[1], intervals[i][1]));
+                    vet.assign(path.begin(),path.end());
+                }
+                else
+                {
+                    v.push_back(vet);
+                    vet.clear();
+                    path.clear();
+                    path.push_back(intervals[i][0]);
+                    path.push_back(intervals[i][1]);
+                    vet.assign(path.begin(), path.end());
+                }
+                if (i == intervals.size() - 1)
+                {
+                    v.push_back(vet);
+                }
+            }
+        }
+        return v;
+    }
+};
+
+————————————————
