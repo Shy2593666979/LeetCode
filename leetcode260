@@ -1,0 +1,196 @@
+LeetCode260：只出现一次的数字
+
+  给定一个整数数组 nums，其中恰好有两个元素只出现一次，其余所有元素均出现两次。 找出只出现一次的那两个元素。你可以按 任意顺序 返回答案。
+
+ 咱在这里先看一下题目要求：
+
+2 <= nums.length <= 3 * 104
+-231 <= nums[i] <= 231 - 1 
+
+
+除两个只出现一次的整数外，nums 中的其他数字都出现两次
+
+看到题目，大致的思路是不是已经有了呢？
+
+ 按照普通想法的是，先排序，排序完成后，进行对某一数据的左右比较，如果跟左右两边都不相同的话，就是题目中要找的两个元素之一。
+
+但在这里，需要找一下bug，如果这两个数据在首尾端会出现什么情况？
+
+ 排序需要哪种排序算法，因为数组的长度有限制，所以要选择哪种排序算法呢？
+
+ 最后就是考虑运行速度！
+
+在这里方便各位读者阅读，我们选择的是 VS Code编译器来进行代码书写。
+
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+    vector<int> nums;
+    int temp;
+    for (int i = 0; i < 10; i++)           //在leetcode会给数据
+    {                                      //在这里就让编程者自己填写10个数据
+        cout << " 输入数据temp ：";
+        cin >> temp;
+        nums.push_back(temp)
+    }
+    cout << endl;
+    int m = nums.size();
+    for (int x = m / 2; x > 0; x = x / 2) /* sort(nums.begin(),nums.end());*/
+    {
+        for (int i = x; i < m; i++)
+        {
+            int temp = nums[i];
+            int p = i;
+            while (p - x >= 0 && nums[p - x] > temp)
+            {
+                nums[p] = nums[p - x];
+                p = p - x;
+            }
+            nums[p] = temp;
+        }
+    }
+}
+
+我在这里选择的是希尔排序法，在一般情况下，不会超出时间限制
+
+上面就是希尔排序法的全貌，如果简便来写就是   sort(nums.begin(),nums.end())
+
+但需要在头文件中加上algorithm（算法）
+
+题目中nums.size（）肯定是>=2，就把全部的特殊情况考虑在内，剩下的就好说了
+
+  vector<int> res;
+    if (m == 2)
+    {
+        int x = nums[0];
+        res.push_back(x);
+        int y = nums[1];
+        res.push_back(y);
+    }
+这是在只有两个元素的情况下，直接用vector容器返回两个数值就行
+
+ps：在leetcode中，返回（return）一般都不能返回数组，需要通过容器（vector，list等）返回
+
+      可以通过这篇文章   ​​​​​​​http://t.csdn.cn/RIDlaio 来掌握STL-vector的用法
+
+if (nums[m - 1] != nums[m - 2])
+        {
+            int s = nums[m - 1];
+            res.push_back(s);
+            for (int i = 1; i < m - 1; i++)
+            {
+                if (nums[i] != nums[i - 1] && nums[i] != nums[i + 1])
+                {
+                    int target = nums[i];
+                    res.push_back(target);
+                }
+            }
+        }
+在这里是考虑的另外一种 特殊情况，如果末尾两个数值不相同，说明最后一个元素就是要找的两元素之一
+
+if (nums[0] != nums[1])
+        {
+            int t = nums[0];
+            res.push_back(t);
+        }
+首端如果有要找的元素，通过比较下端0、1是否相等判断
+
+上述几种情况都是特殊的
+
+ 
+            for (int i = 1; i < m; i++)
+            {
+                if (nums[i] != nums[i - 1] && nums[i] != nums[i + 1])
+                {
+                    int target = nums[i];
+                    res.push_back(target);
+                }
+            }
+一般情况还是占大多数，这里就是比较左右两边是否相等，如果不相等，就是要找的元素之一
+
+最后由迭代器输出数据（这里不能return，所以输出数据）
+
+for (vector<int>::iterator it = res.begin(); it != res.end(); it++)
+    {
+        cout << " " << (*it) << endl;
+    }
+完整代码如下：
+
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+    vector<int> nums;
+    int temp;
+    for (int i = 0; i < 10; i++)
+    {
+        cout << " 输入数据temp ：";
+        cin >> temp;
+        nums.push_back(temp)
+    }
+    cout << endl;
+    int m = nums.size();
+    for (int x = m / 2; x > 0; x = x / 2) /* sort(nums.begin(),nums.end());*/
+    {
+        for (int i = x; i < m; i++)
+        {
+            int temp = nums[i];
+            int p = i;
+            while (p - x >= 0 && nums[p - x] > temp)
+            {
+                nums[p] = nums[p - x];
+                p = p - x;
+            }
+            nums[p] = temp;
+        }
+    }
+ 
+    vector<int> res;
+    if (m == 2)
+    {
+        int x = nums[0];
+        res.push_back(x);
+        int y = nums[1];
+        res.push_back(y);
+    }
+    else
+    {
+ 
+        if (nums[m - 1] != nums[m - 2])
+        {
+            int s = nums[m - 1];
+            res.push_back(s);
+            for (int i = 1; i < m - 1; i++)
+            {
+                if (nums[i] != nums[i - 1] && nums[i] != nums[i + 1])
+                {
+                    int target = nums[i];
+                    res.push_back(target);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 1; i < m; i++)
+            {
+                if (nums[i] != nums[i - 1] && nums[i] != nums[i + 1])
+                {
+                    int target = nums[i];
+                    res.push_back(target);
+                }
+            }
+        }
+        if (nums[0] != nums[1])
+        {
+            int t = nums[0];
+            res.push_back(t);
+        }
+    }
+    for (vector<int>::iterator it = res.begin(); it != res.end(); it++)
+    {
+        cout << " " << (*it) << endl;
+    }
+}
