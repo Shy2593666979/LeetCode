@@ -1,0 +1,289 @@
+题目表述：
+
+我们有一些二维坐标，如 "(1, 3)" 或 "(2, 0.5)"，然后我们移除所有逗号，小数点和空格，得到一个字符串S。返回所有可能的原始字符串到一个列表中。
+
+原始的坐标表示法不会存在多余的零，所以不会出现类似于"00", "0.0", "0.00", "1.0", "001", "00.01"或一些其他更小的数来表示坐标。此外，一个小数点前至少存在一个数，所以也不会出现“.1”形式的数字。
+
+最后返回的列表可以是任意顺序的。而且注意返回的两个数字中间（逗号之后）都有一个空格。
+
+示例 1:
+输入: "(123)"
+输出: ["(1, 23)", "(12, 3)", "(1.2, 3)", "(1, 2.3)"]
+示例 2:
+输入: "(00011)"
+输出:  ["(0.001, 1)", "(0, 0.011)"]
+解释: 
+0.0, 00, 0001 或 00.01 是不被允许的。
+示例 3:
+输入: "(0123)"
+输出: ["(0, 123)", "(0, 12.3)", "(0, 1.23)", "(0.1, 23)", "(0.1, 2.3)", "(0.12, 3)"]
+示例 4:
+输入: "(100)"
+输出: [(10, 0)]
+解释: 
+1.0 是不被允许的。
+
+完整思路：
+
+        我敢说每个题友读三遍题就明白题目的意思和如何做了。大致就是给你一个连续的数字字符串，你通过添加小数点和逗号的形式来使其变成一个坐标，但必须满足删除"," "."后可以连成一个原来的数字字符串。坐标的x，y都必须合法化。
+
+        明白题目想表达的意思是做题的第一步，但是该从哪里下手呢？这个问题怕是难住了各位。通过下面我的讲解能否得到大家的认可！（简单易懂，但写的多）
+
+        ①先把数字字符串分成两份，一份是从前往后，一份是从后往前数。比如"12034",如果让这个数字字符串变成坐标形式合法化，必须是枚举成所有可能的案例，再删除不符合要求的坐标。则X可以取1，12，120，1203。Y可以取2034，034，34，4。将这些数字字符串存放在path数组中。X存放在path_q。Y存放在path_b数组中。
+
+        for(int i=1;i<s.length()-2;i++)
+        {
+            string st=s.substr(1,i);
+            path_q.push_back(st);
+        }
+        for(int i=s.length()-2;i>1;i--)
+        {
+            string st=s.substr(i,s.length()-1-i);
+            path_b.push_back(st);
+        }
+        ②然后就该给各个分割开的数字字符串添加小数点"."  先将不带小数点的数字字符串存放在数组res1中。通过while循环，如果是两位小数，直接在中间添加"." 如果大于两位，则小数点往前移动，知道移动到第一个数字后结束循环。
+
+for(int i=0;i<path_q.size();i++)
+        {
+            if(path_q[i].length()==1)
+            {
+                res1.push_back(path_q[i]);
+            }
+            else if(path_q[i].length()>1)
+            {
+                res1.push_back(path_q[i]);
+                int count_p=path_q[i].length();
+                while(count_p>1)
+                {
+                    string st=path_q[i];
+                    st.insert(count_p-1,".");
+                    res1.push_back(st);
+                    count_p--;
+                }
+            }
+        }
+        for(int i=0;i<path_b.size();i++)
+        {
+            if(path_b[i].length()==1)
+            {
+                res2.push_back(path_b[i]);
+            }
+            else if(path_b[i].length()>1)
+            {
+                res2.push_back(path_b[i]);
+                int count_p=path_b[i].length();
+                while(count_p>1)
+                {
+                    string st=path_b[i];
+                    st.insert(count_p-1,".");
+                    res2.push_back(st);
+                    count_p--;
+                }
+            }
+        }
+
+        ③判断res1字符串数组和res2字符串数组里的字符串是否合法化。如果是整数的话，则字符串第一个字母不能等于0，如果是小数的话，最后一个字母不能等于0。当然排除一种情况就是0。判断字符串是否为小数的条件就要用到string的find（）函数，通过对字符串的查找小数点"."。如果没有找到则为整数，反之为小数。将不符合数字规则的坐标从字符串数组中删除，剩下的就是符合条件的字符串，进行该题的最后一步。
+
+for(int i=0;i<res1.size();i++)
+        {
+            int pos=res1[i].find(".");
+            if(pos!=-1&&res1[i][res1[i].length()-1]=='0')
+            {
+                res1.erase(res1.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos>1&&res1[i][0]=='0')
+            {
+                res1.erase(res1.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos==-1&&res1[i][0]=='0'&&res1[i].length()>1)
+            {
+                res1.erase(res1.begin()+i);
+                i=i-1;
+            }
+        }
+        for(int i=0;i<res2.size();i++)///
+        {
+            int pos=res2[i].find(".");
+            if(pos!=-1&&res2[i][res2[i].length()-1]=='0')
+            {
+                res2.erase(res2.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos>1&&res2[i][0]=='0')
+            {
+                res2.erase(res2.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos==-1&&res2[i][0]=='0'&&res2[i].length()>1)
+            {
+                res2.erase(res2.begin()+i);
+                i=i-1;
+            }
+        }
+
+        ④组合字符串。如果两个字符串合起来等于题目中给的字符串则可以直接通过，但是这个字符串数组中肯定含有小数点，则再次通过string的find（）查找到小数点的下标，再次调用erase（）函数删除该小数点，检查是否能够合成原来字符串。是的话加上(, ) 输出。最后返回定义的字符串数组。
+
+for(int i=0;i<res1.size();i++)
+        {
+            for(int j=0;j<res2.size();j++)
+            {
+                int pos1=res1[i].find(".");
+                int pos2=res2[j].find(".");
+                string str1=res1[i];
+                string str2=res2[j];
+                if(pos1!=-1)
+                {
+                    str1.erase(pos1,1);
+                }
+                if(pos2!=-1)
+                {
+                    str2.erase(pos2,1);
+                }
+                if(str1+str2==s.substr(1,s.length()-2))
+                {
+                string st="("+res1[i]+", "+res2[j]+")";  
+                v.push_back(st);  
+                }
+            }
+        }
+        sort(v.begin(),v.end());
+        v.erase(unique(v.begin(),v.end()),v.end());
+        return v;  
+
+完整代码：
+
+class Solution {
+public:
+    vector<string> ambiguousCoordinates(string s) {
+        vector<string>path_q; //前
+        vector<string>path_b; //后 
+        vector<string>res1;
+        vector<string>res2;
+        vector<string>v;//return
+        for(int i=1;i<s.length()-2;i++)
+        {
+            string st=s.substr(1,i);
+            path_q.push_back(st);
+        }
+        for(int i=s.length()-2;i>1;i--)
+        {
+            string st=s.substr(i,s.length()-1-i);
+            path_b.push_back(st);
+        }
+        for(int i=0;i<path_q.size();i++)
+        {
+            if(path_q[i].length()==1)
+            {
+                res1.push_back(path_q[i]);
+            }
+            else if(path_q[i].length()>1)
+            {
+                res1.push_back(path_q[i]);
+                int count_p=path_q[i].length();
+                while(count_p>1)
+                {
+                    string st=path_q[i];
+                    st.insert(count_p-1,".");
+                    res1.push_back(st);
+                    count_p--;
+                }
+            }
+        }
+        for(int i=0;i<path_b.size();i++)
+        {
+            if(path_b[i].length()==1)
+            {
+                res2.push_back(path_b[i]);
+            }
+            else if(path_b[i].length()>1)
+            {
+                res2.push_back(path_b[i]);
+                int count_p=path_b[i].length();
+                while(count_p>1)
+                {
+                    string st=path_b[i];
+                    st.insert(count_p-1,".");
+                    res2.push_back(st);
+                    count_p--;
+                }
+            }
+        }
+        for(int i=0;i<res1.size();i++)
+        {
+            int pos=res1[i].find(".");
+            if(pos!=-1&&res1[i][res1[i].length()-1]=='0')
+            {
+                res1.erase(res1.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos>1&&res1[i][0]=='0')
+            {
+                res1.erase(res1.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos==-1&&res1[i][0]=='0'&&res1[i].length()>1)
+            {
+                res1.erase(res1.begin()+i);
+                i=i-1;
+            }
+        }
+        for(int i=0;i<res2.size();i++)///
+        {
+            int pos=res2[i].find(".");
+            if(pos!=-1&&res2[i][res2[i].length()-1]=='0')
+            {
+                res2.erase(res2.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos>1&&res2[i][0]=='0')
+            {
+                res2.erase(res2.begin()+i);
+                i--;
+                continue;
+            }
+            else if(pos==-1&&res2[i][0]=='0'&&res2[i].length()>1)
+            {
+                res2.erase(res2.begin()+i);
+                i=i-1;
+            }
+        }
+        for(int i=0;i<res1.size();i++)
+        {
+            for(int j=0;j<res2.size();j++)
+            {
+                int pos1=res1[i].find(".");
+                int pos2=res2[j].find(".");
+                string str1=res1[i];
+                string str2=res2[j];
+                if(pos1!=-1)
+                {
+                    str1.erase(pos1,1);
+                }
+                if(pos2!=-1)
+                {
+                    str2.erase(pos2,1);
+                }
+                if(str1+str2==s.substr(1,s.length()-2))
+                {
+                string st="("+res1[i]+", "+res2[j]+")";  
+                v.push_back(st);  
+                }
+            }
+        }
+        sort(v.begin(),v.end());
+        v.erase(unique(v.begin(),v.end()),v.end());
+        return v;  
+    }
+};
+
+作者大概花费了两个小时，这道中等题还是比较考验脑力的。但是解题思路还是很明确的！
+————————————————
