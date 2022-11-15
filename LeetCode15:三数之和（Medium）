@@ -1,0 +1,121 @@
+题目： 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。
+
+提示：答案中不可以包含重复的三元组
+
+0 <= nums.length <= 3000
+-105 <= nums[i] <= 105
+看到nums.length是小于3000，首先想到的是暴力解法，但这里是三数之和，需要三个循环
+
+3000的三次方也是超过时间限制的！
+
+排序+双指针法！
+
+需要三个数据之和判断是否等于0，但是双指针只能是两个数据，需要for（）定义一个数据，再利用双指针进行不断收缩，满足三个值和为0时才会输出。
+
+这个返回值是需要返回的是中括号里的中括号，所以要用到容器的二阶！
+
+这里也要用到很多关于容器vector的高级用法（vector的去除重复元素，vector的二阶性，vector的算法排序），有需要的读者可以阅读文章http://t.csdn.cn/RID11
+
+       sort(nums.begin(), nums.end());
+        vector<int> vet;
+        vector<vector<int>> v;
+sort（）是排序函数，如果在using namespace std；中需要添加algorithm头文件
+
+一阶: vector<int >vet    二阶 : vector<vector<int>>v
+
+for (int i = 0; i < nums.size() - 1; i++)
+            {
+                int left = i + 1;
+                int right = nums.size() - 1;
+                while (left < right)
+                {
+                    target = nums[left] + nums[right] + nums[i];
+                    vet.clear();
+                    if (target == 0)
+                    {
+                        vet.push_back(nums[left]);
+                        vet.push_back(nums[right]);
+                        vet.push_back(nums[i]);
+                        sort(vet.begin(), vet.end());  //这里排序是为了去除重复的集合
+                        v.push_back(vet);
+                    }
+                    if (target <= 0)
+                    {
+                        left = left + 1;
+                    }
+                    else
+                    {
+                        right = right - 1;
+                    }
+                }
+            }
+
+先用一个for（）来先定一个数据nums[ i] ，在i+1和nums.size( )之间用双指针选择出符合a+b+c=0的数据，另外每次定义一个数据时需要使用vector的clear（）函数清空，否则会出现数据混乱！
+
+        sort(v.begin(), v.end());
+        v.erase(unique(v.begin(), v.end()), v.end());
+最后需要再把v中填入的vet进行排序，去除重复的vet（集合）
+
+完整代码：
+
+class Solution
+{
+public:
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
+        sort(nums.begin(), nums.end());
+        vector<int> vet;
+        vector<vector<int>> v;
+        int target;
+        int pos = 0;
+        for (int s = 0; s < nums.size(); s++)
+        {
+            if (nums[s] != 0)
+            {
+                pos = pos + 1;
+            }
+        }
+        if (nums.size() > 2 && pos == 0)
+        {
+            vet.push_back(0);
+            vet.push_back(0);
+            vet.push_back(0);
+            v.push_back(vet);
+        }
+        else
+        {
+            for (int i = 0; i < nums.size() - 1; i++)
+            {
+                int left = i + 1;
+                int right = nums.size() - 1;
+                while (left < right)
+                {
+                    target = nums[left] + nums[right] + nums[i];
+                    vet.clear();
+                    if (target == 0)
+                    {
+                        vet.push_back(nums[left]);
+                        vet.push_back(nums[right]);
+                        vet.push_back(nums[i]);
+                        sort(vet.begin(), vet.end());
+                        v.push_back(vet);
+                    }
+                    if (target <= 0)
+                    {
+                        left = left + 1;
+                    }
+                    else
+                    {
+                        right = right - 1;
+                    }
+                }
+            }
+        }
+        sort(v.begin(), v.end());
+        v.erase(unique(v.begin(), v.end()), v.end());
+        return v;
+    }
+};
+
+这就是这道题的全部解题思路。
+————————————————
