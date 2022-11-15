@@ -1,0 +1,81 @@
+题目：
+
+给定一个三角形 triangle ，找出自顶向下的最小路径和。
+
+每一步只能移动到下一行中相邻的结点上。相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。也就是说，如果正位于当前行的下标 i ，那么下一步可以移动到下一行的下标 i 或 i + 1 。
+
+示例 1：
+
+输入：triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+输出：11
+解释：如下面简图所示：
+   2
+  3 4
+ 6 5 7
+4 1 8 3
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）。
+示例 2：
+
+输入：triangle = [[-10]]
+输出：-10
+ 
+
+提示：
+
+1 <= triangle.length <= 200
+triangle[0].length == 1
+triangle[i].length == triangle[i - 1].length + 1
+-10 ^4= triangle[i][j] <= 10^4
+
+思路一： 从上到下进行动态规划
+
+思路二： 从下到上进行动态规划
+
+思路一比较复杂，我们在这主要讲一下思路二，后续只给出思路一的完整代码。
+
+（一）完整代码：
+
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n = triangle.size();
+        vector<vector<int>> dp(n, vector<int>(n));
+        // 初始化
+        dp[0][0] = triangle[0][0];
+ 
+        for (int i = 1; i < n; ++i) 
+        {
+            // 每一行最左侧的元素
+            dp[i][0] = dp[i - 1][0] + triangle[i][0];
+            for (int j = 1; j < i; ++j)
+                dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle[i][j];
+            // 每一行最右侧的元素
+            dp[i][i] = dp[i - 1][i - 1] + triangle[i][i];
+        }
+        return *min_element(dp[n - 1].begin(), dp[n - 1].end());
+    }
+};
+
+思路二，从下往上进行动态规划的好处就是不需要考虑那么多，从倒数第二排开始遍历，每次遍历都取下一排对应的列和列+1.最后直接返回数组的【0，0】位置。
+
+（二）完整代码：
+
+class Solution
+{
+public:
+    int minimumTotal(vector<vector<int>> &triangle)
+    {
+        int len = triangle.size();
+        for (int i = len - 2; i >= 0; i--)
+        {
+            for (int j = 0; j <triangle[i].size(); j++)
+            {
+              triangle[i][j]=min(triangle[i+1][j],triangle[i+1][j+1])+triangle[i][j];
+            }
+        }
+        return triangle[0][0];
+    }
+};
+
+我们直接返回的是triangle[0][0]，所以每次都需要再加上triangle对应的本身元素。
+————————————————
