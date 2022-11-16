@@ -1,0 +1,39 @@
+#include<iostream> //方法过于繁琐
+#include<string>
+using namespace std;
+int main()
+{
+	string words[10] = {"abcw", "baz", "foo", "bar", "xtan", "abcdef","eirjjwirj","kdhgjkh","mrptfed","fdgre"};
+	int nums[200];
+	int pos = 0;
+	int m = 10;
+	int Max = 0;
+	for (int i = 0;i < m;i++)
+	{
+		nums[i] = words[i].length();
+	}
+	for (int i = 0;i < m;i++)
+	{
+		for (int j = i + 1;j < m;j++)
+		{
+			pos = 0;
+			int x1 = words[i].length();
+			int x2 = words[j].length();
+			for (int s = 0;s < x1;s++)
+			{
+				for (int t = 0;t < x2;t++)
+				{
+					if (words[i][s] == words[j][t])
+					{
+						pos = pos + 1;
+					}
+				}
+			}
+			if (pos == 0)
+			{
+				Max = max(Max, x1*x2);
+			}
+		}
+	}
+	cout << Max;
+}

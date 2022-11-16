@@ -1,0 +1,49 @@
+#include<iostream>
+#include<string >
+using namespace std;
+int main()
+{
+	bool flag = false;
+	string str = "tstudentstuss";
+	int y = 0;
+	int pos = 0;
+	string str1[5] = { "stu","de","n","t","s" };
+	string s = "students";
+	int m1 = str.length();
+	while (1)
+	{
+		int m = str.length();
+		if (str.length() == 0)
+		{
+			flag = true;
+			break;
+		}
+		for (int i = 0;i < 5;i++)
+		{
+			y = 0;
+			int len = str1[i].length();
+			for (int j = 0;j < len;j++)
+			{
+				if (m < len)
+				{
+					break;
+				}
+				if (str1[i][j] != str[j])
+				{
+					y++;
+				}
+			}
+			if (y == 0 && m >= len)
+			{
+				str = str.substr(len, m);
+				break;
+			}
+		}
+		pos = pos + 1;
+		if (pos > m1)
+		{
+			break;
+		}
+	}
+	cout << flag << endl;
+}

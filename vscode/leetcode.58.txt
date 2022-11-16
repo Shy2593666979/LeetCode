@@ -1,0 +1,30 @@
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+	string st="helloworld    ";
+	char ch=' ';
+	int sum=0;
+	int res=0;
+	int m=st.length();
+	for(int i=m-1;i>0;i--)
+	{
+		if(st[i]==ch)
+		{
+			sum=sum+1; 
+		} 
+		else
+		break;
+	}
+	for(int i=m-sum-1;i>0;i--)
+	{
+		if(st[i]!=ch)
+		{
+			res=res+1;
+		}
+		else
+		break;
+	}
+	cout<<res<<endl;
+	
+}

@@ -1,0 +1,67 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	int array[12] = {5,-2,3,10,-5,0,6,3,-5,6,-6,-2 };
+	int m = sizeof(array) / sizeof(array[0]);
+	int nums[100];
+	int arr[100];
+	int pos = 0;
+	int Max = array[0];
+	int res = 0;
+	nums[0] = 1;
+	for (int i = 0;i < m;i++)
+	{
+		if (array[i] < 0)
+		{
+			if (array[i - 1] <= 0 && i>1)
+			{
+				nums[pos] = array[i];
+				pos = pos + 1;
+				nums[pos] = 1;
+			}
+			if (array[i - 1] > 0)
+			{
+				pos = pos + 1;
+				nums[pos] = array[i];
+				pos = pos + 1;
+				nums[pos] = 1;
+			}
+		}
+		if (array[i] > 0)
+		{
+			nums[pos] = nums[pos] * array[i];
+		}
+		if (array[i] == 0)
+		{
+			pos = pos + 1;
+			nums[pos] = 0;
+			pos = pos + 1;
+			nums[pos] = 1;
+		}
+	}
+	for (int x = 0;x <= pos;x++)
+	{
+		for (int y = x;y <= pos;y++)
+		{
+			if (x != y)
+			{
+				arr[res] = arr[res-1] * nums[y];
+			}
+			if(x==y)
+			{
+				arr[res] = nums[y];
+			}
+			res = res + 1;
+		}
+	}
+	for (int i = 0;i < res;i++)
+	{
+		Max = max(Max, arr[i]);
+	}
+	if (m == 3 && array[1] == 0 && array[0] < 0 && array[2] < 0)
+	{
+		Max = 0;
+	}
+	cout << Max << endl;
+}

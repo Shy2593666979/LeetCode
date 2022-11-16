@@ -1,0 +1,44 @@
+class Solution {
+public:
+    string longestWord(vector<string>& words) {
+        sort(words.begin(),words.end());
+        int Max_length=0;
+        vector<vector<string>>path;
+        vector<string>vet;
+        vector<int>v;
+        unordered_map<int ,string>mp;
+        for(int i=0;i<words.size()-1;i++)
+        {
+            vet.push_back(words[i]);
+            if(words[i][0]!=words[i+1][0]&&words[i]!=words[i+1])
+            {
+              path.push_back(vet);
+              vet.clear();
+            }
+        }
+        vet.push_back(words[words.size()-1]);
+        path.push_back(vet);
+        reverse(path.begin(),path.end());
+        for(int i=0;i<path.size();i++)
+        {
+            bool ret=true;
+            for(int j=1;j<path[i].size();j++)
+            {
+                if(path[i][j].find(path[i][j-1])==-1&&path[i][j-1].length()==j)
+                {
+                    ret=false;
+                    v.push_back(path[i][j-1].length());
+                    mp[path[i][j-1].length()]=path[i][j-1];
+                    break;
+                }
+            }
+            if(ret==true&&path[i][path[i].size()-1].length()==path[i].size()&&(path[i].size()==1||path[i][path[i].size()-1].length()-path[i][path[i].size()-2].length()==1))
+            {
+                v.push_back(path[i][path[i].size()-1].length());
+                mp[path[i][path[i].size()-1].length()]=path[i][path[i].size()-1];
+            }
+        }
+        sort(v.begin(),v.end());
+        return mp[v[v.size()-1]];
+    }
+};

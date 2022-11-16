@@ -1,0 +1,62 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	int Array[10];
+	int res = 0;
+	int nums[12] = { 5,3,4,6,5,5,3,6,6,3,3,3 };
+	int m = sizeof(nums) / sizeof(nums[0]);
+	sort(nums, nums + m);
+	int pos = 0;
+	int arr[20];
+	int app[20];
+	arr[0] = 1;
+	for (int i = 1;i < m;i++)
+	{
+		if (nums[i - 1] != nums[i])
+		{
+			pos = pos + 1;
+			arr[pos] = 1;
+		}
+		if (nums[i] == nums[i - 1])
+		{
+			arr[pos] = arr[pos] + 1;
+		}
+		app[pos] = nums[i - 1];
+
+	}
+	int Max = 0;
+	int x1;
+	int x2;
+	int y = 0;
+	for (int i = 0;i < pos + 1;i++)
+	{
+		Max = max(Max, arr[i]);
+	}
+	for (int i = 0;i < pos + 1;i++)
+	{
+		y = 0;//初始化等于0；
+		int s = arr[i];
+		for (int j = 0;j < pos + 1;j++)
+		{
+			if (s >= arr[j]&&i!=j)
+			{
+				y++;
+			}
+		}
+		if (y == pos )
+		{
+			Array[res] = i;
+			res = res + 1;
+		}
+		if (y == pos - 1)
+		{
+			Array[res] = i;
+			res = res + 1;
+		}
+	}
+	for (int i = 0;i < res;i++)
+		cout << app[Array[i]] << endl;
+	
+}

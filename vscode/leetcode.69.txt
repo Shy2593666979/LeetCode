@@ -1,0 +1,29 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+int main()
+{
+	int target;
+	cout << "输入你的数值target：";
+	cin >> target;
+	int left = 0;
+	int right = target / 2 + 1;
+	while (left < right)
+	{
+		int mid = (left + right) / 2;
+		if (sqrt(target) - mid <= 1 && sqrt(target) - mid>=0)
+		{
+			cout << mid << endl;
+			break;
+		}
+		if (sqrt(target) - mid > 1)
+		{
+			left = left + 1;
+		}
+		else
+		{
+			right = right - 1;
+		}
+
+	}
+}

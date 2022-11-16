@@ -1,0 +1,37 @@
+#include<iostream>
+#include<string>
+using namespace std;
+int main() {
+	string st = "[()]{}";
+	string temp="";
+	char ch = ' ';
+	bool flag = true;
+	for (int i = 0;i < st.length();i++)
+	{
+		if (st[i] == '[' or st[i] == '{' or st[i] == '(')
+			temp = temp + st[i];
+		else
+		{
+			if (temp.length() > 0)
+			{
+				ch = ' ';
+				if (st[i] == ']') ch = '[';
+				if (st[i] == '}') ch = '{';
+				if (st[i] == ')') ch = '(';
+				if (  temp[temp.length() - 1] == ch)
+					temp = temp.substr(0, temp.length() - 1);
+			}
+			else
+			{
+				flag = false;
+				break;
+			}
+		}
+	}
+	if (temp.length() != 0)
+	{
+		flag = false;
+	}
+	cout << "结果为：" <<flag<< endl;
+	system("pause");
+}

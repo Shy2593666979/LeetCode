@@ -1,0 +1,38 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int main()
+{
+	int arr[10];
+	int pos = 0;
+	int nums[9] = { 3,4,6,3,4,6,2,2,5 };
+	int m = sizeof(nums) / sizeof(nums[0]);
+	for (int x = m / 2;x > 0;x = x / 2)
+	{
+		for (int i = x;i < m;i++)
+		{
+			int target = nums[i];
+			int p = i;
+			while (p - x >= 0 && nums[p - x] > target)
+			{
+				nums[p] = nums[p - x];
+				p = p - x;
+			}
+			nums[p] = target;
+		}
+	}	
+	for (int i = 1;i < m;i++)
+	{
+		if (nums[i] != nums[i - 1])
+		{
+			
+			arr[pos] = nums[i - 1];
+			pos = pos + 1;
+		}
+		
+			arr[pos] = nums[m - 1];
+	}
+	for(int i=0;i<pos+1;i++ )
+	cout << arr[i] << endl;
+}

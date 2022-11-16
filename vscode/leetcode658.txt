@@ -1,0 +1,44 @@
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        vector<int>vet;
+        vector<vector<int>>v;
+        vector<int>path;
+        for(int i=0;i<arr.size()-k+1;i++)
+        {
+            vet.assign(arr.begin()+i,arr.begin()+k+i);
+            v.push_back(vet);
+        }
+        for(int i=0;i<arr.size();i++)
+        {
+            arr[i]=arr[i]-x;
+            arr[i]=abs(arr[i]);
+        }
+            int target=0;
+        for(int i=0;i<k;i++)
+        {
+            target=target+arr[i];
+        }
+        path.push_back(target);
+        int left=1;
+        int right=k;
+        while(right!=arr.size())
+        {
+            target=target-arr[left-1]+arr[right];
+            path.push_back(target);
+            left++;
+            right++;
+        }
+        int index=0;
+        int Min=path[0];
+        for(int i=1;i<path.size();i++)
+        {
+            Min=min(Min,path[i]);
+            if(Min==path[i]&&path[i]!=path[i-1])
+            {
+                index=i;
+            }
+        }
+        return v[index];
+    }
+};

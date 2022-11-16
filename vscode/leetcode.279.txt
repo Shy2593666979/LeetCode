@@ -1,0 +1,43 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+int main()
+{
+	int target;
+	cout << "输入某个数值target：";
+	cin >> target;
+	int x = sqrt(target);
+	int pos = 0;
+	int sum = 0;
+	int res = 4;
+	while (target != sum)
+	{
+		if (target - sum < x * x)
+		{
+			x = x - 1;
+		}
+		else {
+			sum = sum + x * x;
+			pos = pos + 1;
+		}
+		if (x < 1)
+		{
+			x = 1;
+		}
+	}
+	int y = sqrt(target);
+	while (1)
+	{
+		if (target % (y * y) == 0)
+		{
+			res = target / (y * y);
+			break;
+		}
+		else
+		{
+			y = y - 1;
+		}
+	}
+	pos = min(pos, res);
+	cout << pos << endl;
+}
