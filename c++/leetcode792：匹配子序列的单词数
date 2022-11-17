@@ -1,0 +1,57 @@
+题目表述：
+
+给定字符串 s 和字符串数组 words, 返回  words[i] 中是s的子序列的单词个数 。
+
+字符串的 子序列 是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是none)，而不改变其余字符的相对顺序。
+
+例如， “ace” 是 “abcde” 的子序列。
+ 
+
+示例 1:
+
+输入: s = "abcde", words = ["a","bb","acd","ace"]
+输出: 3
+解释: 有三个是 s 的子序列的单词: "a", "acd", "ace"。
+Example 2:
+
+输入: s = "dsahjpjauf", words = ["ahjpjau","ja","ahbwzgqnuk","tnmlanowax"]
+输出: 2
+ 
+
+提示:
+
+1 <= s.length <= 5 * 10^4
+1 <= words.length <= 5000
+1 <= words[i].length <= 50
+words[i]和 s 都只由小写字母组成。
+
+完整思路：
+
+因为子序列是连续的字符，只能在各个字符之间或者前后加其他字符，但不能改变子序列字符的次序。然后用到find函数，查找下一个字符出现的下标index，然后从index+1下标开始搜索下一个字符，直到遍历完所有的words的字符，如果有find返回-1的，就直接false，没有。count+1。
+
+完整代码：
+
+class Solution {
+public:
+    int numMatchingSubseq(string s, vector<string>& words) {
+        int count_s=0;
+        for(int i=0;i<words.size();i++)
+        {
+            bool ret=true;
+            int index=0;
+            for(int j=0;j<words[i].length();j++)
+            {
+                if(s.find(words[i][j],index)==-1)
+                {
+                    ret=false;
+                    break;
+                }
+                else index=s.find(words[i][j],index)+1;
+            }
+            if(ret) count_s++;
+        }
+        return count_s;
+    }
+};
+
+————————————————
