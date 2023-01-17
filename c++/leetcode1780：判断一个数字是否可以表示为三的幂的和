@@ -1,0 +1,81 @@
+题目表述：
+
+        给你一个整数 n ，如果你可以将 n 表示成若干个不同的三的幂之和，请你返回 true ，否则请返回 false 。
+
+对于一个整数 y ，如果存在整数 x 满足 y == 3^x，我们称这个整数 y 是三的幂。
+
+示例 1：
+
+输入：n = 12
+输出：true
+解释：12 = 31 + 32
+示例 2：
+
+输入：n = 91
+输出：true
+解释：91 = 30 + 32 + 34
+示例 3：
+
+输入：n = 21
+输出：false
+ 
+
+提示：
+
+1 <= n <= 10^7
+
+解题思路一：
+
+因为小于10的7次方的三次幂不是很多，可以直接看出来可以用回溯的办法，如果path数组中元素之和等于n，则返回true，否则返回false；
+
+解题思路二：
+
+将n转化为3进制，如果三进制没有2，则说明可以由三次幂之和得到。例如12=110（三进制）
+
+代码表示一：
+
+class Solution {
+public:
+    vector<int>result;
+    bool ret=false;
+    void dfs(vector<int>path,int n,int startIndex)
+    {
+        if(accumulate(result.begin(),result.end(),0)==n)
+        {
+            ret=true;
+            return ;
+        }
+        if(accumulate(result.begin(),result.end(),0)>n)
+        {
+            return ;
+        }
+        for(int i=startIndex;i<path.size();i++)
+        {
+            result.push_back(path[i]);
+            dfs(path,n,i+1);
+            result.pop_back();
+        }
+    }
+    bool checkPowersOfThree(int n) {
+        vector<int>path;
+        for(int i=1;i<=n;i=i*3)
+        {
+            path.push_back(i);
+        }
+        dfs(path,n,0);
+        return ret;
+    }
+};
+代码表示二：
+
+class Solution {
+public:
+    bool checkPowersOfThree(int n) {
+        while(n){
+            if(n%3 > 1)
+                return false;
+            n /= 3;
+        }
+        return true;
+    }
+};
