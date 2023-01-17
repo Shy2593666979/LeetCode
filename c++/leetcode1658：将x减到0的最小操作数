@@ -1,0 +1,86 @@
+题目表述：
+
+给你一个整数数组 nums 和一个整数 x 。每一次操作时，你应当移除数组 nums 最左边或最右边的元素，然后从 x 中减去该元素的值。请注意，需要 修改 数组以供接下来的操作使用。
+
+如果可以将 x 恰好 减到 0 ，返回 最小操作数 ；否则，返回 -1 。
+
+示例 1：
+
+输入：nums = [1,1,4,2,3], x = 5
+输出：2
+解释：最佳解决方案是移除后两个元素，将 x 减到 0 。
+示例 2：
+
+输入：nums = [5,6,7,8,9], x = 4
+输出：-1
+示例 3：
+
+输入：nums = [3,2,20,1,1,3], x = 10
+输出：5
+解释：最佳解决方案是移除后三个元素和前两个元素（总共 5 次操作），将 x 减到 0 。
+ 
+
+提示：
+
+1 <= nums.length <= 1e5
+1 <= nums[i] <= 1e4
+1 <= x <= 1e9
+
+解题思路：
+
+        题目表达的意思翻译过来就是只能加nums数组两边的元素，找到两边元素之和等于X的最少数目。
+
+        可以使用滑动窗口方法，用nums数组之和减去窗口内的元素之和，如果结果等于X，则就与count_min（定义为元素数目最小值）比较取最小。
+
+        具体步骤：定义窗口的最左边（left）和最右边（right）为0，如果nums数组元素之和（定义为sum）减去窗口内的数值之和大于X，则将窗口右端往右移位（right+1），sum也需要减去相应的数据（nums[right]），否则窗口左端向右移位（left+1），sum需要加相应的数（nums[left）。 
+
+        再次循环比较sum减去窗口内的数值之和是否等于X，等于将数组长度减去right到left的距离与count_min比较取最小，不等于则再进行上述操作。
+
+ps：
+
+代码开始处可以加上如果nums数组的最左边和最右边的元素大于X，则直接return -1；
+
+需要注意的地方还有sum加nums[left]或者减去nums[right]都是sum先加减再改left、right。
+
+有些案例（[5,2,3,1,1]    5）需要在right<=nums.size()条件下才可以运行的。
+
+解题代码：
+
+class Solution {
+public:
+    int minOperations(vector<int>& nums, int x) {
+        int sum=accumulate(nums.begin(),nums.end(),0);
+        if(nums[0]>x&&nums[nums.size()-1]>x) return -1;
+        int count_min=INT_MAX;
+        int left=0,right=0;
+        bool ret=false;
+        while(left<=right&&right<=nums.size())
+        {
+            if(sum==x)
+            {
+                int s=nums.size()-(right-left);
+                count_min=min(count_min,s);
+                if(right<nums.size())
+                {
+                sum=sum-nums[right];
+                }
+                right++;
+                ret=true;
+                continue;  //如果sum=x的话，需要将此条循环结束掉
+            }
+            if(sum>x)
+            {
+                sum=sum-nums[right];
+                right++;
+            }
+            else if(sum<x)
+            {
+                sum=sum+nums[left];
+                left++;
+            }
+        }
+        if(ret) return count_min;
+        else return -1;
+    }
+};
+————————————————
