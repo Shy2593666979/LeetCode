@@ -1,0 +1,83 @@
+题目表述：
+
+        给定一个候选人编号的集合 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的每个数字在每个组合中只能使用 一次 。
+
+注意：解集不能包含重复的组合。 
+
+示例 1:
+
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+输出:
+[
+[1,1,6],
+[1,2,5],
+[1,7],
+[2,6]
+]
+示例 2:
+
+输入: candidates = [2,5,2,1,2], target = 5,
+输出:
+[
+[1,2,2],
+[5]
+]
+ 
+
+提示:
+
+1 <= candidates.length <= 100
+1 <= candidates[i] <= 50
+1 <= target <= 30
+
+解题思路：
+
+        candidates长度小于100，又是需要判断每个元素取与不去，所以想到回溯的解题办法。
+
+将每个元素放到path数组中，如果path数组的和大于target，直接返回；如果path数组的和等于target，将path数组存放在result的二维数组中。
+
+下面就该解决一下去重问题：
+
+            if (i > startIndex && candidates[i] == candidates[i - 1]) {
+
+                continue;
+
+            }
+
+在for循环语句中加入一句if条件句，就可以去掉重复元素，for（）是横向的搜索，回溯的dfs是纵向搜索，所以就可以在result中解决 去重问题！
+
+解题代码：
+
+class Solution {
+public:
+    vector<int>path;
+    vector<vector<int>>result;
+    void backtrick(vector<int> candidates,int target,int startIndex)
+    {
+        if(accumulate(path.begin(),path.end(),0)==target)
+        {
+            result.push_back(path);
+            return ;
+        }
+        if(accumulate(path.begin(),path.end(),0)>target)
+        {
+            return ;
+        }
+        for(int i=startIndex;i<candidates.size();i++)
+        {
+            if (i > startIndex && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+            path.push_back(candidates[i]);
+            backtrick(candidates,target,i+1);
+            path.pop_back();
+        }
+    }
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(),candidates.end());
+        backtrick(candidates,target,0);
+        return result;
+    }
+};
