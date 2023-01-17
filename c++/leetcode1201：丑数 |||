@@ -1,0 +1,69 @@
+题目表述：
+
+给你四个整数：n 、a 、b 、c ，请你设计一个算法来找出第 n 个丑数。
+
+丑数是可以被 a 或 b 或 c 整除的 正整数 。
+
+示例 1：
+
+输入：n = 3, a = 2, b = 3, c = 5
+输出：4
+解释：丑数序列为 2, 3, 4, 5, 6, 8, 9, 10... 其中第 3 个是 4。
+示例 2：
+
+输入：n = 4, a = 2, b = 3, c = 4
+输出：6
+解释：丑数序列为 2, 3, 4, 6, 8, 9, 10, 12... 其中第 4 个是 6。
+示例 3：
+
+输入：n = 5, a = 2, b = 11, c = 13
+输出：10
+解释：丑数序列为 2, 4, 6, 8, 10, 11, 12, 13... 其中第 5 个是 10。
+示例 4：
+
+输入：n = 1000000000, a = 2, b = 217983653, c = 336916467
+输出：1999999984
+ 
+
+提示：
+
+1 <= n, a, b, c <= 10^9
+1 <= a * b * c <= 10^18
+本题结果在 [1, 2 * 10^9] 的范围内
+
+解题思路：
+
+        如果n的范围比较小的话，暴力法完全可以解决，但是n的数据范围已经达到int类型的绝对值了。想到丑数之类也是按照从小到大的顺序排列的，就想到二分查找。通过二分查找确定第n个丑数。
+
+二分查找：left可以从0开始，但是right呢？         有一种方法可以直接定义right=INT_MAX,这种就是从int类型开始搜索，也可以，但是在n比较小的时候比较浪费时间。另外一种方法就是用n*abc的最小值，因为如果abc都没有公倍数之类的，最大也就是n*min{a，b，c}了。比较第一个方法可以剩下不少时间。时间复杂度为O（log n）
+
+当某一数除a、b、c的和减去ab、ac、bc加上abc的和的下标就是第n个丑数了。
+
+ps：因为abc和ab，ac，bc都是有重复元素的，需要减去。这里的ab、ac、bc、abc都是最小公倍数。
+
+解题代码：
+
+class Solution {
+public:
+    int nthUglyNumber(int n, int a, int b, int c) {
+         long ab=lcm<long>(a,b);
+         long ac=lcm<long>(a,c);
+         long bc=lcm<long>(b,c);  //需要注意的就是lcm默认类型为int，需要本身去改成long
+         long abc=lcm<long>(ab,c);
+         long target=n*min(min(a,b),c);
+         long left=min(min(a,b),c);
+         long right=target;
+         while(left<=right)
+         {
+             long mid=left+(-left+right)/2;
+             if(mid/a+mid/b+mid/c-mid/ab-mid/ac-mid/bc+mid/abc>=n)
+             {
+                 right=mid-1;
+             }
+             else{
+                 left=mid+1;
+             }
+         }
+         return (int)left;
+    }
+};
